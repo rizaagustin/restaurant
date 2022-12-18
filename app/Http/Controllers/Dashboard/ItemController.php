@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Item;
 use App\Models\Category;
+use Illuminate\Support\Facades\Storage;
 
 class ItemController extends Controller
 {
@@ -31,7 +32,8 @@ class ItemController extends Controller
     public function create()
     {
         return view('pages.dashboard.item.create',[
-            'items' => Item::all()
+            'items' => Item::all(),
+            'categories' => Category::all(),
         ]);
     }
 
@@ -44,16 +46,32 @@ class ItemController extends Controller
     public function store(Request $request)
     {
 
+        $pesan = [
+            'required' => ':attribute harus diisi !',
+            'min' => 'field harus diisi minimal :min karakter !',            
+            'max' => 'field harus diisi maksimal :max karakter !',
+            'numeric' => ':attribute harus diisi angka !',
+            'image' => ':attribute harus diisi image !'
+        ];
+
+        // dd($request);
         $a = $request->validate([
             'name' => 'required',
             'category_id' => 'required',
+            'image' => 'image|file|max:1024',
             'price' => 'required',
-            'image' => 'required',
-        ]);
+        ],$pesan);
+
+        // dd();
+        
+        // jika images ada isinya atau true
+        if ($request->file('image')) {
+            $a['image'] = $request->file('image')->store('menu-images');
+        }
 
         Item::create($a);
         // $request->session()->flash('success', 'Registration successfull! Please Login');
-        return redirect()->back();
+        return redirect('/dashboard/item')->with('success','Data berhasil di simpan');
     }
 
     /**
@@ -65,11 +83,11 @@ class ItemController extends Controller
     public function show(Item $item)
     {
         //return response
-        return response()->json([
-            'success' => true,
-            'message' => 'Detail Data Post',
-            'data'    => $item  
-        ]); 
+        // return response()->json([
+        //     'success' => true,
+        //     'message' => 'Detail Data Post',
+        //     'data'    => $item  
+        // ]); 
     }
 
     /**
@@ -78,9 +96,13 @@ class ItemController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Item $item, Category $categories)
     {
-
+        return view('pages.dashboard.item.edit',[
+            'categories' => Category::all(),
+            'item' => $item
+            ]
+        );
     }
 
     /**
@@ -92,17 +114,35 @@ class ItemController extends Controller
      */
     public function update(Request $request, $id)
     {
+
+        $pesan = [
+            'required' => ':attribute harus diisi !',
+            'min' => 'field harus diisi minimal :min karakter !',            
+            'max' => 'field harus diisi maksimal :max karakter !',
+            'numeric' => ':attribute harus diisi angka !',
+            'image' => ':attribute harus diisi image !'
+        ];
+
         $data = $request->validate([
-            'name' => 'required',
+            'name' => 'required|max:255|min:2',
             'category_id' => 'required',
-            'price' => 'required',
-            'image' => 'required',
-        ]);
+            'image' => 'image|file|max:1024',
+            'price' => 'required|numeric',
+        ], $pesan);
+
+        if ($request->file('image')) {
+            // menghapus foto lama agar tidak memenuhi media penyimpanan
+            if ($request->oldImage) {
+                Storage::delete($request->oldImage);
+            }
+
+            $data['image'] = $request->file('image')->store('menu-images');
+        }
 
         Item::where('id',$id)
         ->update($data);
         // $request->session()->flash('success', 'Registration successfull! Please Login');
-        return redirect()->back();
+        return redirect('/dashboard/item')->with('success','Data berhasil di update');
     }
 
     /**
@@ -111,14 +151,14 @@ class ItemController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Item $item)
     {
         // dd($id);
-        // if ($post->image) {
-        //     Storage::delete($post->image);
-        // }
+        if ($item->image) {
+            Storage::delete($item->image);
+        }
 
-        Item::destroy($id);
-        return redirect()->back();   
+        Item::destroy($item->id);
+        return redirect('/dashboard/item')->with('success','Data berhasil di hapus');
     }
 }

@@ -12,7 +12,7 @@
             <a class="nav-link {{ (request()->is('/') == "/") ? 'active' : ''}}" aria-current="page" href="{{ route('index') }}">Item</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link  {{ (request()->is('category') == "Home") ? 'active' : ''}}" href="/category">Category</a>
+            <a class="nav-link  {{ (request()->is('/dashboard/category') == "Home") ? 'active' : ''}}" href="/dashboard/category">Category</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#">Promo</a>

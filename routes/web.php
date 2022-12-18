@@ -22,7 +22,7 @@ use App\Http\Controllers\Dashboard\CategoryController;
 Route::resource('/', ItemController::class);
 
 Route::resource('/dashboard/item',ItemController::class);
-Route::resource('category', CategoryController::class);
+Route::resource('/dashboard/category', CategoryController::class);
 
 // Route::get('/', function () {
 //     return view('welcome');

@@ -6,8 +6,14 @@
 
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center border-bottom">
     <h1 class="h4">ITEMS</h1>  
-    <a href="#" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#exampleModal">Create Item</a>
+    <a href="/dashboard/item/create" class="btn btn-primary mb-3">Create Item</a>
 </div>
+@if(session()->has('success'))
+
+<div class="alert alert-success" role="alert">
+  {{ session('success') }}
+</div>
+@endif
 <div class="table-responsive col-lg-12">
 
     <table class="table table-striped table-sm">
@@ -23,12 +29,16 @@
 
       @foreach($items as $key => $item)
       <tr>
-          <td class="col">{{ $item->image }}</td>
+          <td class="col">  
+            <img class="card-img border border-dark" src="{{ asset('storage/' . $item->image) }}"  style="width: 7rem;" alt="Card image">
+            {{-- <img class="card-img" src="{{ url(Storage::url($item->image)) }}" alt="Card image"> --}}
+          </td>
+          
           <td class="col-6">{{ $item->name }}</td>
           <td class="col">{{ $item->category->name }}</td>
           <td class="col">{{number_format($item->price)}}</td>  
           <td class="col">
-              <button type="button" class="btn btn-sm btn-success update" data-id="{{ $item->id }}">Update</button>
+              <a href="/dashboard/item/{{ $item->id}}/edit" type="button" class="btn btn-sm btn-success update" data-id="{{ $item->id }}">Update</a>
               <form action="/dashboard/item/{{ $item->id }}" method="post" class="d-inline">
                 @method('delete')
                 @csrf
@@ -45,7 +55,7 @@
 @include('pages.dashboard.item.modal-edit')
 {{-- @include('pages.modal-edit') --}}
 
-@push('after-script')
+{{-- @push('after-script')
 <script>
   $('.update').click(function(e) {
 
@@ -58,6 +68,7 @@
         
           $("#image-edit").val(response.data.image);
           $("#name-edit").val(response.data.name);
+          
           $("#price-edit").val(response.data.price);
           $('#exampleModal2').modal('show');
         
@@ -67,4 +78,4 @@
  
   });
   </script>  
-@endpush
+@endpush --}}

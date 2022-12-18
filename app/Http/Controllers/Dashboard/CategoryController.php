@@ -27,7 +27,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        //
+        return view('pages.dashboard.category.create');
     }
 
     /**
@@ -38,7 +38,19 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $pesan = [
+            'required' => ':attribute harus diisi !',
+            'min' => 'field harus diisi minimal :min karakter !',            
+            'max' => 'field harus diisi maksimal :max karakter !',
+        ];
+
+        // dd($request);
+        $data = $request->validate([
+            'name' => 'required|min:1|max:50',
+        ],$pesan);
+
+        Category::create($data);
+        return redirect('/dashboard/category')->with('success','Data berhasil di simpan');
     }
 
     /**
@@ -58,9 +70,11 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Category $category)
     {
-        //
+        return view('pages.dashboard.category.edit',[
+            'category' => $category
+        ]);
     }
 
     /**
@@ -72,7 +86,21 @@ class CategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $pesan = [
+            'required' => ':attribute harus diisi !',
+            'min' => 'field harus diisi minimal :min karakter !',            
+            'max' => 'field harus diisi maksimal :max karakter !',
+        ];
+
+        // dd($request);
+        $data = $request->validate([
+            'name' => 'required|min:2|max:50',
+        ],$pesan);
+
+        Category::where('id',$id)
+            ->update($data);
+
+        return redirect('/dashboard/category')->with('success','Data berhasil di update');    
     }
 
     /**
@@ -81,8 +109,9 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Category $category)
     {
-        //
+        Category::destroy($category->id);
+        return redirect('/dashboard/category')->with('success','Data berhasil di hapus');
     }
 }
