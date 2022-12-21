@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Dashboard\ItemController;
 use App\Http\Controllers\Dashboard\CategoryController;
+use App\Http\Controllers\Dashboard\TableController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -23,7 +24,12 @@ Route::resource('/', ItemController::class);
 
 Route::resource('/dashboard/item',ItemController::class);
 Route::resource('/dashboard/category', CategoryController::class);
+Route::resource('/dashboard/table', TableController::class);
 
 // Route::get('/', function () {
 //     return view('welcome');
 // });
+
+Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
+    return view('dashboard');
+})->name('dashboard');

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Models\Table;
 use Illuminate\Http\Request;
 
 class TableController extends Controller
@@ -14,7 +15,10 @@ class TableController extends Controller
      */
     public function index()
     {
-        //
+
+        return view('pages.dashboard.table.index',[
+            'tables' => Table::all()
+        ]);
     }
 
     /**
@@ -24,7 +28,7 @@ class TableController extends Controller
      */
     public function create()
     {
-        //
+        return view('pages.dashboard.table.create');
     }
 
     /**
@@ -35,7 +39,20 @@ class TableController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $pesan = [
+            'required' => ':attribute harus diisi !',
+            'min' => 'field harus diisi minimal :min karakter !',            
+            'max' => 'field harus diisi maksimal :max karakter !',
+        ];
+
+        // dd($request);
+        $data = $request->validate([
+            'no_table' => 'required|min:1|max:50',
+            'no_room' => ''
+        ],$pesan);
+
+        Table::create($data);
+        return redirect('/dashboard/table')->with('success','Data berhasil di simpan');
     }
 
     /**
@@ -52,12 +69,14 @@ class TableController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  int  $idp
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Table $table)
     {
-        //
+        return view('pages.dashboard.table.edit',[
+            'table' => $table
+        ]);
     }
 
     /**
@@ -69,7 +88,22 @@ class TableController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $pesan = [
+            'required' => ':attribute harus diisi !',
+            'min' => 'field harus diisi minimal :min karakter !',            
+            'max' => 'field harus diisi maksimal :max karakter !',
+        ];
+
+        // dd($request);
+        $data = $request->validate([
+            'no_table' => 'required|min:2|max:50',
+            'no_room' => ''
+        ],$pesan);
+
+        Table::where('id',$id)
+            ->update($data);
+
+        return redirect('/dashboard/table')->with('success','Data berhasil di update');    
     }
 
     /**
@@ -78,8 +112,9 @@ class TableController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Table $table)
     {
-        //
+        Table::destroy($table->id);
+        return redirect('/dashboard/table')->with('success','Data berhasil di hapus');
     }
 }

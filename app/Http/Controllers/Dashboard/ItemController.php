@@ -55,7 +55,7 @@ class ItemController extends Controller
         ];
 
         // dd($request);
-        $a = $request->validate([
+        $data = $request->validate([
             'name' => 'required',
             'category_id' => 'required',
             'image' => 'image|file|max:1024',
@@ -66,11 +66,10 @@ class ItemController extends Controller
         
         // jika images ada isinya atau true
         if ($request->file('image')) {
-            $a['image'] = $request->file('image')->store('menu-images');
+            $data['image'] = $request->file('image')->store('menu-images');
         }
 
-        Item::create($a);
-        // $request->session()->flash('success', 'Registration successfull! Please Login');
+        Item::create($data);
         return redirect('/dashboard/item')->with('success','Data berhasil di simpan');
     }
 

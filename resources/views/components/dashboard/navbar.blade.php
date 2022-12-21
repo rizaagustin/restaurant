@@ -12,7 +12,35 @@
             <a class="nav-link {{ (request()->is('/') == "/") ? 'active' : ''}}" aria-current="page" href="{{ route('index') }}">Item</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link  {{ (request()->is('/dashboard/category') == "Home") ? 'active' : ''}}" href="/dashboard/category">Category</a>
+
+            @if (request()->is('dashboard/category') ||
+            request()->is('dashboard/category/*') ||
+            request()->is('dashboard/*/category') ||
+            request()->is('dashboard/*/category/*'))
+              <a class="nav-link active" href="/dashboard/category">Category</a>                                
+            
+            @else
+            
+            <a class="nav-link" href="/dashboard/category">Category</a>                                
+            
+            @endif
+
+          </li>
+          <li class="nav-item">
+
+            @if (request()->is('dashboard/table') ||
+            request()->is('dashboard/table/*') ||
+            request()->is('dashboard/*/table') ||
+            request()->is('dashboard/*/table/*'))
+
+              <a class="nav-link active" href="/dashboard/table">Table</a>                                
+            
+            @else
+            
+              <a class="nav-link" href="/dashboard/table">Table</a>                                
+            
+            @endif
+            
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#">Promo</a>

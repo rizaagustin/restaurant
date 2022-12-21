@@ -15,7 +15,7 @@
 
       <input type="text" class="form-control" name="name" id="name" value="{{ old('name') }}" autocomplete="off" placeholder="Masukan Nama Category" required>
 
-      @error('image') 
+      @error('name') 
       <p class="text-danger">
         {{ $message }}
       </p>
